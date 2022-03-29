@@ -7,4 +7,5 @@ The plan for this web-application is to create a Google Calendar like web-applic
 Developers:
 
 Front-End: Miranda Overstreet
+
 Back-End: Miranda Overstreet
