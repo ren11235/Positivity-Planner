@@ -1,0 +1,38 @@
+<h2>Events</h2>
+<table class="table">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Description</th>
+    <th>Time</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let event of activeEvents">
+    <td>{{event.id}}</td>
+    <td>{{event.name}}</td>
+    <td>{{event.time}}</td>
+    <td>
+      <button class="btn btn-danger" (click)="deleteEvent(event)">
+        <i class="fa fa-trash"></i>
+      </button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th><h5>Event Description</h5> </th>
+      <th><input placeholder="Doctor's Appointment" [(ngModel)]="eventMessage"></th>
+      <th>Time</th>
+      <th><input placeholder="12" [(ngModel)]="eventTime"></th>
+      <th><button class="btn btn-primary" (click)="addEvent()">Add</button></th>
+    </tr>
+    </thead>
+</table>
+
+
+
+
