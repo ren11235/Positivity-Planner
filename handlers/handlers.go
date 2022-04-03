@@ -10,6 +10,7 @@ import (
 	"github.com/ren11235/Positivity-Planner/planner"
 )
 
+
 // Returns all current event items
 func GetEventListHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, planner.Get())
