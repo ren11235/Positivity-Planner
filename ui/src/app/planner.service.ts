@@ -26,11 +26,11 @@ export class EventService {
 export class Event {
   id: string;
   name: string;
-  time: Number;
+  time: string;
 
   constructor() { 
     this.id = "";
     this.name = "";
-    this.time = -1;
+    this.time = "";
   }
 }

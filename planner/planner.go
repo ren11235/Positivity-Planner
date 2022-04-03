@@ -25,7 +25,7 @@ func initialiseList() {
 type Event struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
-	Time int    `json:"time"`
+	Time string `json:"time"`
 }
 
 // Get retrieves all events
@@ -34,7 +34,7 @@ func Get() []Event {
 }
 
 // Adds a new event
-func Add(message string, time int) string {
+func Add(message string, time string) string {
 	t := newEvent(message, time)
 	mtx.Lock()
 	list = append(list, t)
@@ -52,7 +52,7 @@ func Delete(id string) error {
 	return nil
 }
 
-func newEvent(msg string, time int) Event {
+func newEvent(msg string, time string) Event {
 	return Event{
 		ID:   xid.New().String(),
 		Name: msg,

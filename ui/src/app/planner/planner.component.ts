@@ -10,12 +10,12 @@ export class EventComponent implements OnInit {
 
   activeEvents: Event[];
   eventMessage: string;
-  eventTime: number;
+  eventTime: string;
   
   constructor(private eventService: EventService) { 
     this.activeEvents = [];
     this.eventMessage = "";
-    this.eventTime = 12;
+    this.eventTime = "";
   }
 
   ngOnInit() {
