@@ -7,10 +7,12 @@ export class EventService {
   constructor(private httpClient: HttpClient) {}
 
   getEventList() {
+    console.log("Getting");
     return this.httpClient.get(environment.gateway + '/planner');
   }
 
   addEvent(event: Event) {
+    console.log("Add");
     return this.httpClient.post(environment.gateway + '/planner', event);
   }
 
