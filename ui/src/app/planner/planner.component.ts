@@ -16,6 +16,7 @@ export class EventComponent implements OnInit {
     this.activeEvents = [];
     this.eventMessage = "";
     this.eventTime = "";
+    console.log("test");
   }
 
   ngOnInit() {
@@ -28,7 +29,8 @@ export class EventComponent implements OnInit {
     });
   }
 
-  addEvent() {
+  addNewEvent() {
+    console.log("We are adding an event");
     var newEvent : Event = {
       name: this.eventMessage,
       id: '',

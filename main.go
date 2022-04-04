@@ -3,21 +3,27 @@ package main
 import (
 	//"path"
 	//"path/filepath"
+	//"github.com/gin-gonic/gin"
+
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
+	"github.com/rs/cors"
+
 	//"os"
-	//"github.com/gin-gonic/gin"
+
 	//"github.com/ren11235/Positivity-Planner/handlers"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-	"encoding/json"
+
 	"github.com/google/uuid"
-	"fmt"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 func main() {
 	//pass := os.Getenv("DB_PASS")
+
 	fmt.Println("test1")
 	db, err := gorm.Open("sqlite3", "./planner.db")
 	fmt.Println("test2")
@@ -38,7 +44,7 @@ func main() {
 type event struct {
 	ID   string `gorm:"primary_key" json:"id"`
 	Name string `json:"name"`
-	Time  string   `json:"time"`
+	Time string `json:"time"`
 }
 
 type App struct {
@@ -48,6 +54,7 @@ type App struct {
 
 func (a *App) start() {
 	fmt.Println("test6")
+
 	a.db.AutoMigrate(&event{})
 	fmt.Println("test7")
 	a.r.HandleFunc("/planner", a.getAllEvents).Methods("GET")
@@ -56,7 +63,15 @@ func (a *App) start() {
 	a.r.HandleFunc("/planner/{id}", a.deleteEvent).Methods("DELETE")
 	a.r.PathPrefix("/").Handler(http.FileServer(http.Dir("./webapp/dist/webapp/")))
 	fmt.Println("test8")
-	log.Fatal(http.ListenAndServe(":3000", a.r))
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:4200", "http://localhost:*"},
+		AllowCredentials: true,
+		AllowedMethods:   []string{"GET", "POST", "DELETE", "UPDATE"},
+	})
+
+	handler := c.Handler(a.r)
+	log.Fatal(http.ListenAndServe(":3000", handler))
+	//log.Fatal(http.ListenAndServe(":3000", a.r))
 	fmt.Println("test9")
 }
 
@@ -100,7 +115,7 @@ func (a *App) updateEvent(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&s)
 	if err != nil {
 		sendErr(w, http.StatusBadRequest, err.Error())
-		return;
+		return
 	}
 	s.ID = mux.Vars(r)["id"]
 	err = a.db.Save(&s).Error
