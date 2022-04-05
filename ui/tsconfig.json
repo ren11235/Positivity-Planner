@@ -1,5 +1,5 @@
 /* To learn more about this file see: https://angular.io/config/tsconfig. */
-{
+/*{
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
@@ -7,6 +7,8 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "strictPropertyInitialization": false,
+    "strictFunctionTypes": false,
+    "strictBindCallApply": false,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
@@ -29,5 +31,36 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
+  }
+}*/
+
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "module": "es2020",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "target": "es2015",
+    "importHelpers": true,
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2017", "dom"],
+    //"paths": {
+      //"angular-calendar": ["./projects/angular-calendar/src"],
+      //"angular-calendar/date-adapters/date-fns": [
+      //  "./projects/angular-calendar/src/date-adapters/date-fns"
+      //],
+      //"angular-calendar/date-adapters/moment": [
+      //  "./projects/angular-calendar/src/date-adapters/moment"
+      //]
+    //},
+    "allowSyntheticDefaultImports": true
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "strictInjectionParameters": true
   }
 }
