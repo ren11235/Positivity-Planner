@@ -1,16 +1,34 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { EventService, Event } from '../planner.service';
-
+import { CalendarEvent, CalendarView } from 'angular-calendar';
 @Component({
   selector: 'app-event',
   templateUrl: './planner.component.html',
-  styleUrls: ['./planner.component.css']
+  styleUrls: ['./planner.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventComponent implements OnInit {
-
+  view: CalendarView = CalendarView.Month;
   activeEvents: Event[];
   eventMessage: string;
   eventTime: string;
+
+  viewDate = new Date();
+
+  events: CalendarEvent[] = [
+    //{
+      //title: 'An event',
+      //start: new Date(),
+      //color: {
+        //primary: '#ad2121',
+        //secondary: '#FAE3E3',
+      //},
+    //},
+  ];
+
+  clickedDate: Date;
+
+  clickedColumn: number;
   
   constructor(private eventService: EventService) { 
     this.activeEvents = [];
@@ -55,3 +73,5 @@ export class EventComponent implements OnInit {
     })
   }
 }
+
+
