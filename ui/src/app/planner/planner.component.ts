@@ -61,16 +61,7 @@ export class EventComponent{
 
   weekStartsOn: 0 = 0;
 
-  events: CalendarEvent[] = [
-    //{
-      //title: 'An event',
-      //start: new Date(),
-      //color: {
-        //primary: '#ad2121',
-        //secondary: '#FAE3E3',
-      //},
-    //},
-  ];
+  events: CalendarEvent[] = [];
 
   clickedDate: Date;
 
@@ -87,6 +78,9 @@ export class EventComponent{
     //console.log("test");
   //}
 
+  showDayView(){
+    this.view = CalendarView.Day;
+  }
   startDragToCreate(
     segment: WeekViewHourSegment,
     mouseDownEvent: MouseEvent,
