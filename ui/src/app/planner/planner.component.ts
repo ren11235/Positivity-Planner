@@ -1,10 +1,14 @@
-import { Component, Injectable, OnInit, ViewEncapsulation, ChangeDetectorRef, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Injectable, OnInit, TemplateRef, ViewChild, ViewEncapsulation, ChangeDetectorRef, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { EventService, Event } from '../planner.service';
 import { CalendarEvent, CalendarEventTitleFormatter, CalendarView } from 'angular-calendar';
 import { addDays, addMinutes, endOfWeek } from 'date-fns';
 import { WeekViewHourSegment } from 'calendar-utils';
 import { fromEvent } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
+  
+import {NgbModal, NgbDate, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 function floorToNearest(amount: number, precision: number) {
   return Math.floor(amount / precision) * precision;
 }
@@ -29,6 +33,7 @@ export class CustomEventTitleFormatter extends CalendarEventTitleFormatter {
 }
 
 @Component({
+  
   selector: 'app-event',
   templateUrl: './planner.component.html',
   styleUrls: ['./planner.component.css'],
@@ -52,10 +57,13 @@ export class CustomEventTitleFormatter extends CalendarEventTitleFormatter {
 
 
 export class EventComponent{
+  @ViewChild('content') templateRef: TemplateRef<any>;
+
   view: CalendarView = CalendarView.Month;
   activeEvents: Event[];
   eventMessage: string;
   eventTime: string;
+
 
   viewDate = new Date();
 
@@ -69,7 +77,11 @@ export class EventComponent{
 
   dragToCreateActive = false;
   
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef, private modalService: NgbModal) {}
+
+  modalRef: BsModalRef;
+
+  closeResult = '';
 
   //constructor(private eventService: EventService) { 
     //this.activeEvents = [];
@@ -81,6 +93,35 @@ export class EventComponent{
   showDayView(){
     this.view = CalendarView.Day;
   }
+
+  //openModal(template: TemplateRef<any>) {
+    //const user = {
+        //id: 10
+      //};
+    //this.modalRef = this.modalService.show(template);
+  //}
+
+  open(content) {
+    this.modalService.open(content,
+    {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+          this.closeResult = `Closed with: ${result}`;
+        }, (reason) => {
+          this.closeResult = 
+          `Dismissed ${this.getDismissReason(reason)}`;
+        }
+    );
+  }
+  
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
+  }
+
   startDragToCreate(
     segment: WeekViewHourSegment,
     mouseDownEvent: MouseEvent,
@@ -93,6 +134,17 @@ export class EventComponent{
       meta: {
         tmpEvent: true,
       },
+      actions: [
+        {
+          label: '<i class="fas fa-fw fa-pencil-alt"></i>',
+          onClick: ({ event }: { event: CalendarEvent }): void => {
+            console.log('Edit event', event);
+            this.open(this.templateRef);
+            //this.modalRef = this.modalService.show(this.templateRef);
+            
+          },
+        },
+      ],
     };
     this.events = [...this.events, dragToSelectEvent];
     const segmentPosition = segmentElement.getBoundingClientRect();

@@ -19,6 +19,8 @@ import { CalendarHeaderComponent } from './header';
 
 import { CommonModule } from '@angular/common';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,6 +41,7 @@ import { CommonModule } from '@angular/common';
       provide: DateAdapter,
       useFactory: adapterFactory,
     }),
+  
   ],
   providers: [EventService],
   bootstrap: [AppComponent],

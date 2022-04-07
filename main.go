@@ -47,6 +47,9 @@ type event struct {
 	Time string `json:"time"`
 }
 
+type calendar_event struct {
+	Title string `json:"title"`
+}
 type App struct {
 	db *gorm.DB
 	r  *mux.Router
