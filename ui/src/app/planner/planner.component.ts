@@ -8,7 +8,7 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
   
-import {NgbModal, NgbDate, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbModalOptions, NgbDatepicker, NgbModalRef, NgbDate, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 function floorToNearest(amount: number, precision: number) {
   return Math.floor(amount / precision) * precision;
 }
@@ -38,7 +38,6 @@ export class CustomEventTitleFormatter extends CalendarEventTitleFormatter {
   templateUrl: './planner.component.html',
   styleUrls: ['./planner.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-
   providers: [
     {
       provide: CalendarEventTitleFormatter,
@@ -79,9 +78,11 @@ export class EventComponent{
   
   constructor(private cdr: ChangeDetectorRef, private modalService: NgbModal) {}
 
-  modalRef: BsModalRef;
+  modalRef: NgbModalRef;
 
   closeResult = '';
+
+  
 
   //constructor(private eventService: EventService) { 
     //this.activeEvents = [];
@@ -101,15 +102,18 @@ export class EventComponent{
     //this.modalRef = this.modalService.show(template);
   //}
 
+  logoutScreenOptions: NgbModalOptions = {
+    backdrop: 'static',
+  };
+
   open(content) {
-    this.modalService.open(content,
-    {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-          this.closeResult = `Closed with: ${result}`;
-        }, (reason) => {
-          this.closeResult = 
-          `Dismissed ${this.getDismissReason(reason)}`;
-        }
-    );
+   this.modalRef = this.modalService.open(content, this.logoutScreenOptions);
+  
+   this.modalRef.result.then((result) => {
+    this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+    this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+});
   }
   
   private getDismissReason(reason: any): string {

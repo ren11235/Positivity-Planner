@@ -6,3 +6,9 @@ button {
   td {
     vertical-align: unset;
   }
+
+  
+
+  .modal{
+    z-index: 2000;
+  }

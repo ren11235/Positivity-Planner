@@ -19,6 +19,8 @@ import { CalendarHeaderComponent } from './header';
 
 import { CommonModule } from '@angular/common';
 
+import { NgbDate, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 
 @NgModule({
@@ -30,6 +32,7 @@ import { CommonModule } from '@angular/common';
   ],
   imports: [
     CommonModule, 
+    NgbModule,
     FormsModule, 
     CalendarModule,
     AppRoutingModule,
