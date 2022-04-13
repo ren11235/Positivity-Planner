@@ -153,7 +153,7 @@
   </div>
 </ng-template>
 
-<div [ngSwitch]="view">
+<div class = "views" [ngSwitch]="view">
   <mwl-calendar-month-view
     *ngSwitchCase="'month'"
     [viewDate]="viewDate"

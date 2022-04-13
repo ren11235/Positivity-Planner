@@ -20,18 +20,40 @@ describe('example to-do app', () => {
       cy.visit('http://localhost:4200/planner')
     })
   
-    it('displays two todo items by default', () => {
-        // We use the `cy.get()` command to get all elements that match the selector.
-        // Then, we use `should` to assert that there are two matched items,
-        // which are the two default items.
+    it('Can initialize correctly with month view', () => {
+        
+        // Ensure that view is set to month
         cy.get('mwl-demo-utils-calendar-header').should('have.attr', 'ng-reflect-view', 'month')
-    
-        // We can go even further and check that the default todos each contain
-        // the correct text. We use the `first` and `last` functions
-        // to get just the first and last matched elements individually,
-        // and then perform an assertion with `should`.
-        //cy.get('.todo-list li').first().should('have.text', 'Pay electric bill')
-        //cy.get('.todo-list li').last().should('have.text', 'Walk the dog')
+        cy.get('mwl-demo-utils-calendar-header').should('have.attr', 'ng-reflect-view-date')
+        cy.get('.views').should('have.attr', 'ng-reflect-ng-switch', 'month')
+        
+        // Make sure that each day is in month view
+        cy.get('.cal-cell-row').children().filter('mwl-calendar-month-cell').should("have.length", "35")
+    })
+
+    it('Can switch correctly to week view', () => {
+      // We'll click on the "Week" button in order to
+      // display week view
+      cy.get(".btn").contains('Week').click()
+
+      cy.get('mwl-demo-utils-calendar-header').should('have.attr', 'ng-reflect-view', 'week')
+      cy.get('.views').should('have.attr', 'ng-reflect-ng-switch', 'week')
+
+      // Make sure that each day is in month view
+      cy.get('.cal-day-column').should("have.length", "7")
+      cy.get('.cal-hour').should("have.length", "192")
+    })
+
+    it('Can switch correctly to day view', () => {
+      // We'll click on the "Day" button in order to
+      // display week view
+      cy.get(".btn").contains('Day').click()
+
+      cy.get('mwl-demo-utils-calendar-header').should('have.attr', 'ng-reflect-view', 'day')
+      cy.get('.views').should('have.attr', 'ng-reflect-ng-switch', 'day')
+
+      // Make sure that each day is in month view
+      cy.get('.cal-hour').should("have.length", "24")
     })
 
     /*
