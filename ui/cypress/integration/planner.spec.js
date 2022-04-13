@@ -1,15 +1,51 @@
 /// <reference types="cypress" />
 
-// Welcome to Cypress!
-//
-// This spec file contains a variety of sample tests
-// for a todo list app that are designed to demonstrate
-// the power of writing tests in Cypress.
-//
-// To learn more about how Cypress works and
-// what makes it such an awesome testing tool,
-// please read our getting started guide:
-// https://on.cypress.io/introduction-to-cypress
+function find_previous_month_year(month, year) {
+  let previous_month = ""
+  let previous_year = year
+
+  switch(month){
+    case "Jan":
+      previous_month = "Dec"
+      previous_year = year - 1
+      break;
+    case "Feb":
+      previous_month = "Jan"
+      break;
+    case "Mar":
+      previous_month = "Feb"
+      break;
+    case "Apr":
+      previous_month = "Mar"
+      break;
+    case "May":
+      previous_month = "Apr"
+      break;
+    case "Jun":
+      previous_month = "May"
+      break;
+    case "Jul":
+      previous_month = "Jun"
+      break;
+    case "Aug":
+      previous_month = "Jul"
+      break;
+    case "Sep":
+      previous_month = "Aug"
+      break;
+    case "Oct":
+      previous_month = "Sep"
+      break;
+    case "Nov":
+      previous_month = "Oct"
+      break;
+    case "Dec":
+      previous_month = "Nov"
+      break;
+  }
+  console.log(previous_month);
+  return [previous_month, previous_year];
+}
 
 describe('example to-do app', () => {
     beforeEach(() => {
@@ -20,8 +56,7 @@ describe('example to-do app', () => {
       cy.visit('http://localhost:4200/planner')
     })
   
-    it('Can initialize correctly with month view', () => {
-        
+    it('Can initialize correctly with month view', () => { 
         // Ensure that view is set to month
         cy.get('mwl-demo-utils-calendar-header').should('have.attr', 'ng-reflect-view', 'month')
         cy.get('mwl-demo-utils-calendar-header').should('have.attr', 'ng-reflect-view-date')
@@ -56,126 +91,39 @@ describe('example to-do app', () => {
       cy.get('.cal-hour').should("have.length", "24")
     })
 
-    /*
-    it('displays two todo items by default', () => {
-      // We use the `cy.get()` command to get all elements that match the selector.
-      // Then, we use `should` to assert that there are two matched items,
-      // which are the two default items.
-      cy.get('.todo-list li').should('have.length', 2)
-  
-      // We can go even further and check that the default todos each contain
-      // the correct text. We use the `first` and `last` functions
-      // to get just the first and last matched elements individually,
-      // and then perform an assertion with `should`.
-      cy.get('.todo-list li').first().should('have.text', 'Pay electric bill')
-      cy.get('.todo-list li').last().should('have.text', 'Walk the dog')
+    it('Can switch to previous monthes correctly', () => {
+     
+      let weekday = "";
+      let month = "";
+      let date = "";
+      let year = 0;
+
+      let words = []
+      cy.get('mwl-demo-utils-calendar-header').then(elem => {
+        const date_string = String(elem.attr("ng-reflect-view-date"));
+        console.log(date_string);
+        words = date_string.split(' ')
+        weekday = words[0];
+        month = words[1];
+        date = words[2];
+        year = words[3];
+
+        let previous_month = month;
+        let previous_year = year;
+    
+        let data = [];
+
+        for(let i = 0; i < 24; i++){
+          data = find_previous_month_year(previous_month, previous_year);
+          previous_month = data[0];
+          previous_year = data[1];
+        
+          cy.get(".btn").contains('Previous').click();
+
+          expect(cy.get("mwl-demo-utils-calendar-header").contains(previous_month));
+          expect(cy.get("mwl-demo-utils-calendar-header").contains(previous_year));
+        }
+      })
     })
-  
-    it('can add new todo items', () => {
-      // We'll store our item text in a variable so we can reuse it
-      const newItem = 'Feed the cat'
-  
-      // Let's get the input element and use the `type` command to
-      // input our new list item. After typing the content of our item,
-      // we need to type the enter key as well in order to submit the input.
-      // This input has a data-test attribute so we'll use that to select the
-      // element in accordance with best practices:
-      // https://on.cypress.io/selecting-elements
-      cy.get('[data-test=new-todo]').type(`${newItem}{enter}`)
-  
-      // Now that we've typed our new item, let's check that it actually was added to the list.
-      // Since it's the newest item, it should exist as the last element in the list.
-      // In addition, with the two default items, we should have a total of 3 elements in the list.
-      // Since assertions yield the element that was asserted on,
-      // we can chain both of these assertions together into a single statement.
-      cy.get('.todo-list li')
-        .should('have.length', 3)
-        .last()
-        .should('have.text', newItem)
-    })
-  
-    it('can check off an item as completed', () => {
-      // In addition to using the `get` command to get an element by selector,
-      // we can also use the `contains` command to get an element by its contents.
-      // However, this will yield the <label>, which is lowest-level element that contains the text.
-      // In order to check the item, we'll find the <input> element for this <label>
-      // by traversing up the dom to the parent element. From there, we can `find`
-      // the child checkbox <input> element and use the `check` command to check it.
-      cy.contains('Pay electric bill')
-        .parent()
-        .find('input[type=checkbox]')
-        .check()
-  
-      // Now that we've checked the button, we can go ahead and make sure
-      // that the list element is now marked as completed.
-      // Again we'll use `contains` to find the <label> element and then use the `parents` command
-      // to traverse multiple levels up the dom until we find the corresponding <li> element.
-      // Once we get that element, we can assert that it has the completed class.
-      cy.contains('Pay electric bill')
-        .parents('li')
-        .should('have.class', 'completed')
-    })
-  
-    context('with a checked task', () => {
-      beforeEach(() => {
-        // We'll take the command we used above to check off an element
-        // Since we want to perform multiple tests that start with checking
-        // one element, we put it in the beforeEach hook
-        // so that it runs at the start of every test.
-        cy.contains('Pay electric bill')
-          .parent()
-          .find('input[type=checkbox]')
-          .check()
-      })
-  
-      it('can filter for uncompleted tasks', () => {
-        // We'll click on the "active" button in order to
-        // display only incomplete items
-        cy.contains('Active').click()
-  
-        // After filtering, we can assert that there is only the one
-        // incomplete item in the list.
-        cy.get('.todo-list li')
-          .should('have.length', 1)
-          .first()
-          .should('have.text', 'Walk the dog')
-  
-        // For good measure, let's also assert that the task we checked off
-        // does not exist on the page.
-        cy.contains('Pay electric bill').should('not.exist')
-      })
-  
-      it('can filter for completed tasks', () => {
-        // We can perform similar steps as the test above to ensure
-        // that only completed tasks are shown
-        cy.contains('Completed').click()
-  
-        cy.get('.todo-list li')
-          .should('have.length', 1)
-          .first()
-          .should('have.text', 'Pay electric bill')
-  
-        cy.contains('Walk the dog').should('not.exist')
-      })
-  
-      it('can delete all completed tasks', () => {
-        // First, let's click the "Clear completed" button
-        // `contains` is actually serving two purposes here.
-        // First, it's ensuring that the button exists within the dom.
-        // This button only appears when at least one task is checked
-        // so this command is implicitly verifying that it does exist.
-        // Second, it selects the button so we can click it.
-        cy.contains('Clear completed').click()
-  
-        // Then we can make sure that there is only one element
-        // in the list and our element does not exist
-        cy.get('.todo-list li')
-          .should('have.length', 1)
-          .should('not.have.text', 'Pay electric bill')
-  
-        // Finally, make sure that the clear button no longer exists.
-        cy.contains('Clear completed').should('not.exist')
-      })
-    })*/
   })
   
