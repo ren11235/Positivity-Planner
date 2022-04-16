@@ -195,18 +195,23 @@
   <div class="modal-body">
     <form>
       <div class="form-group">
-        <label for="dateOfBirth">Date of birth</label>
+        <label for="Title">Title</label>
         <div class="input-group">
-          <input id="dateOfBirth" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #dp="ngbDatepicker">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button"></button>
-          </div>
+          <input id="Title" class="form-control" name="title"  placeholder={{currEvent.title}} [(ngModel)]="currEvent.title">
+        </div>
+        <label for="Start Time">Start Time</label>
+        <div class="input-group">
+          <input type="time" id="Start" class="form-control" name = "start" placeholder={{currEvent.start}} [(ngModel)]="tempStart">
+        </div>
+        <label for="Start Time">Start Time</label>
+        <div class="input-group">
+          <input type="time" id="End" class="form-control" name = "end" placeholder={{currEvent.end}} [(ngModel)]="tempEnd">
         </div>
       </div>
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+    <button type="button" class="btn btn-outline-dark" (click)=" addNewEvent(currEvent); modal.dismiss('Add click') ">Add New Event</button>
   </div>
 </ng-template>
 </body>

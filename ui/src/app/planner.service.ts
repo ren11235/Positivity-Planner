@@ -21,7 +21,7 @@ export class EventService {
     return this.httpClient.put(environment.gateway + '/planner', event);
   }
 
-  deleteEvent(event: Event) {
+  deleteEvent(event: CalendarEvent) {
     return this.httpClient.delete(environment.gateway + '/planner/' + event.id);
   }
 }

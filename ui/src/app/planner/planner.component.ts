@@ -1,7 +1,7 @@
 import { Component, Injectable, OnInit, TemplateRef, ViewChild, ViewEncapsulation, ChangeDetectorRef, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { EventService, Event } from '../planner.service';
 import { CalendarEvent, CalendarEventTitleFormatter, CalendarView } from 'angular-calendar';
-import { addDays, addMinutes, endOfWeek } from 'date-fns';
+import { addDays, addMinutes, endOfWeek, set} from 'date-fns';
 import { WeekViewHourSegment } from 'calendar-utils';
 import { fromEvent } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
@@ -37,7 +37,7 @@ export class CustomEventTitleFormatter extends CalendarEventTitleFormatter {
   selector: 'app-event',
   templateUrl: './planner.component.html',
   styleUrls: ['./planner.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: CalendarEventTitleFormatter,
@@ -63,6 +63,9 @@ export class EventComponent{
   eventMessage: string;
   eventTime: string;
 
+  currEvent: CalendarEvent;
+  tempStart: string;
+  tempEnd: string;
 
   viewDate = new Date();
 
@@ -98,7 +101,20 @@ export class EventComponent{
   showDayView(){
     this.view = CalendarView.Day;
   }
+  
+  changeDateTime(){
+    console.log(this.tempStart);
+    let time_component_start = this.tempStart.split(":");
+    let new_hour_start = time_component_start[0];
+    let new_minute_start = time_component_start[1];
 
+    let time_component_end = this.tempEnd.split(":");
+    let new_hour_end = time_component_end[0];
+    let new_minute_end = time_component_start[1];
+
+    this.currEvent.start = set(this.currEvent.start, {hours: Number(new_hour_start), minutes: Number(new_minute_start)});
+    this.currEvent.end = set(this.currEvent.end, {hours: Number(new_hour_end), minutes: Number(new_minute_end)});
+  }
   //openModal(template: TemplateRef<any>) {
     //const user = {
         //id: 10
@@ -111,13 +127,21 @@ export class EventComponent{
   };
 
   open(content) {
-   this.modalRef = this.modalService.open(content, this.logoutScreenOptions);
-  
+    this.modalRef = this.modalService.open(content, this.logoutScreenOptions);
+    
    this.modalRef.result.then((result) => {
     this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
     this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-});
+    console.log(this.closeResult);
+    if(this.closeResult == `Dismissed with Add click`){
+      delete this.currEvent.meta.tmpEvent;
+    }
+    
+    this.refresh();
+    this.getAll();
+    this.refresh();
+    });
   }
   
   private getDismissReason(reason: any): string {
@@ -151,11 +175,21 @@ export class EventComponent{
             //this.modalRef = this.modalService.show(this.templateRef);
             
           },
+          
         },
+        {
+          label: '<i class="fa fa-trash"></i>',
+          onClick: ({ event }: { event: CalendarEvent }): void => {
+            console.log('Delete Event', event);
+            this.deleteEvent(dragToSelectEvent);
+            //this.modalRef = this.modalService.show(this.templateRef);
+          }
+        },
+        
       ],
     };
-
     
+
     this.events = [...this.events, dragToSelectEvent];
     const segmentPosition = segmentElement.getBoundingClientRect();
     this.dragToCreateActive = true;
@@ -166,10 +200,16 @@ export class EventComponent{
     fromEvent(document, 'mousemove')
       .pipe(
         finalize(() => {
-          delete dragToSelectEvent.meta.tmpEvent;
           this.dragToCreateActive = false;
-          this.addNewEvent(dragToSelectEvent);
-          this.refresh();
+          this.currEvent = dragToSelectEvent;
+          this.open(this.templateRef);
+          
+          //console.log("CLOSING WITH" + returnValue);
+          
+          //if (returnValue == "Add click"){
+            
+          //}
+          
         }),
         takeUntil(fromEvent(document, 'mouseup'))
       )
@@ -211,7 +251,7 @@ export class EventComponent{
     this.eventService.getEventList().subscribe((data: any) => {
       let tempEvents: CalendarEvent[] = [];
       for (let i = 0; i < data.length; i++){
-        
+        console.log("TESTSTETSETSETSETESTEST");
         let newEvent: CalendarEvent = {
           id: this.events.length.toString(),
           title: 'New event',
@@ -231,8 +271,18 @@ export class EventComponent{
                 
               },
             },
+            {
+              label: '<i class="fa fa-trash"></i>',
+              onClick: ({ event }: { event: CalendarEvent }): void => {
+                console.log('Delete Event', event);
+                this.deleteEvent(newEvent);
+                console.log("test6");
+                //this.modalRef = this.modalService.show(this.templateRef);
+              }
+            },
           ],
         };
+        
         newEvent.id = data[i].id;
         newEvent.title = data[i].title;
         newEvent.start = new Date(data[i].start);
@@ -247,6 +297,7 @@ export class EventComponent{
       console.log(this.events);
       //this.events = data;
     });
+    this.refresh();
   }
 
   addNewEvent(newCalendarEvent: CalendarEvent) {
@@ -280,9 +331,18 @@ export class EventComponent{
     });
   }
 
-  deleteEvent(event: Event) {
+  deleteEvent(event: CalendarEvent) {
+    console.log("test1");
     this.eventService.deleteEvent(event).subscribe(() => {
+      console.log("test2");
+      this.refresh();
+      console.log("test3");
       this.getAll();
+      this.refresh();
+      console.log("test4");
     })
+    console.log("test5");
+    this.refresh();
+    
   }
 }
