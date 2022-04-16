@@ -68,7 +68,11 @@ export class EventComponent{
 
   weekStartsOn: 0 = 0;
 
+  constructor(private cdr: ChangeDetectorRef, private modalService: NgbModal, private eventService: EventService) {}
+
   events: CalendarEvent[] = [];
+
+  //events: CalendarEvent[] = [];
 
   clickedDate: Date;
 
@@ -76,7 +80,7 @@ export class EventComponent{
 
   dragToCreateActive = false;
   
-  constructor(private cdr: ChangeDetectorRef, private modalService: NgbModal) {}
+  
 
   modalRef: NgbModalRef;
 
@@ -132,7 +136,7 @@ export class EventComponent{
     segmentElement: HTMLElement
   ) {
     const dragToSelectEvent: CalendarEvent = {
-      id: this.events.length,
+      id: this.events.length.toString(),
       title: 'New event',
       start: segment.date,
       meta: {
@@ -150,6 +154,8 @@ export class EventComponent{
         },
       ],
     };
+
+    
     this.events = [...this.events, dragToSelectEvent];
     const segmentPosition = segmentElement.getBoundingClientRect();
     this.dragToCreateActive = true;
@@ -162,6 +168,7 @@ export class EventComponent{
         finalize(() => {
           delete dragToSelectEvent.meta.tmpEvent;
           this.dragToCreateActive = false;
+          this.addNewEvent(dragToSelectEvent);
           this.refresh();
         }),
         takeUntil(fromEvent(document, 'mouseup'))
@@ -182,8 +189,11 @@ export class EventComponent{
         if (newEnd > segment.date && newEnd < endOfView) {
           dragToSelectEvent.end = newEnd;
         }
+        
         this.refresh();
       });
+      
+      
   }
 
   private refresh() {
@@ -192,38 +202,76 @@ export class EventComponent{
   }
 
 
-  /*ngOnInit() {
+  ngOnInit() {
     this.getAll();
   }
 
   getAll() {
+    console.log("GETTING ALL");
     this.eventService.getEventList().subscribe((data: any) => {
-      this.activeEvents = data;
+      let tempEvents: CalendarEvent[] = [];
+      for (let i = 0; i < data.length; i++){
+        
+        let newEvent: CalendarEvent = {
+          id: this.events.length.toString(),
+          title: 'New event',
+          start: new Date(),
+          
+          meta: {
+            tmpEvent: true,
+          },
+
+          actions: [
+            {
+              label: '<i class="fas fa-fw fa-pencil-alt"></i>',
+              onClick: ({ event }: { event: CalendarEvent }): void => {
+                console.log('Edit event', event);
+                this.open(this.templateRef);
+                //this.modalRef = this.modalService.show(this.templateRef);
+                
+              },
+            },
+          ],
+        };
+        newEvent.id = data[i].id;
+        newEvent.title = data[i].title;
+        newEvent.start = new Date(data[i].start);
+        newEvent.end = new Date(data[i].end); 
+        delete newEvent.meta.tmpEvent;
+        tempEvents =  [...tempEvents, newEvent];
+      }
+
+      this.events = tempEvents;
+      console.log(data);
+      console.log(tempEvents);
+      console.log(this.events);
+      //this.events = data;
     });
   }
 
-  addNewEvent() {
-    //var event: CalendarEvent =
+  addNewEvent(newCalendarEvent: CalendarEvent) {
+    //var newCalendarEvent: CalendarEvent =
       //{
         //title: 'Has custom class',
         //color: {
-         // primary: '#ad2121',
-        // // secondary: '#FAE3E3',
+          //primary: '#ad2121',
+          //secondary: '#FAE3E3',
        //},
-       // start: new Date(),
+        //start: new Date(),
         //cssClass: 'my-custom-class',
       //};
     console.log("We are adding an event");
-    var newEvent : Event = {
-      name: this.eventMessage,
-      id: '',
-      time: this.eventTime,
-    };
+    //var newEvent : Event = {
+      //name: this.eventMessage,
+      //id: '',
+      //time: this.eventTime,
+    //};
 
-    this.eventService.addEvent(newEvent).subscribe(() => {
+    this.eventService.addEvent(newCalendarEvent).subscribe(() => {
       this.getAll();
-      this.eventMessage = '';
+      //this.eventMessage = '';
     });
+    this.refresh();
   }
 
   completeEvent(event: Event) {
@@ -237,7 +285,4 @@ export class EventComponent{
       this.getAll();
     })
   }
-}
-
-*/
 }

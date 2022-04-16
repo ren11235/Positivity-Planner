@@ -41,14 +41,17 @@ func main() {
 	fmt.Println("test5")
 }
 
-type event struct {
-	ID   string `gorm:"primary_key" json:"id"`
-	Name string `json:"name"`
-	Time string `json:"time"`
-}
+//type event struct {
+//ID   string `gorm:"primary_key" json:"id"`
+//Name string `json:"name"`
+//Time string `json:"time"`
+//}
 
-type calendar_event struct {
+type event struct {
+	ID    string `gorm:"primary_key" json:"id"`
 	Title string `json:"title"`
+	Start string `json:"start"`
+	End   string `json:"end"`
 }
 type App struct {
 	db *gorm.DB

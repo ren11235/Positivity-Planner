@@ -12,7 +12,7 @@ export class EventService {
     return this.httpClient.get(environment.gateway + '/planner');
   }
 
-  addEvent(event: Event) {
+  addEvent(event: CalendarEvent) {
     console.log("Add");
     return this.httpClient.post(environment.gateway + '/planner', event);
   }
