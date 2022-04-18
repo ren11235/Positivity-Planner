@@ -21,10 +21,14 @@ export class AuthenticationService {
     }
 
     login(username: string, password: string) {
-        return this.http.post<any>(environment.gateway + '/users/authenticate', { username, password })
+        console.log("TESTING 123");
+        //return this.http.post(`${environment.gateway}/users/auth`, username);
+        console.log("DOESN'T MAKE ANY SENSE!!!!!");
+        return this.http.post<any>(`${environment.gateway}/users/auth`, { username, password })
             .pipe(map(user => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('currentUser', JSON.stringify(user));
+                console.log("HMMMMM");
                 this.currentUserSubject.next(user);
                 return user;
             }));

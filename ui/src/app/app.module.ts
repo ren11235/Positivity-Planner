@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -11,7 +11,6 @@ import { HomeComponent } from './home/home.component';
 ;
 import { EventComponent } from './planner/planner.component';
 import { EventService } from './planner.service';
-import { FormsModule } from '@angular/forms';
 
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
@@ -30,6 +29,14 @@ import { JwtInterceptor } from './helpers/jwt.interceptor';
 import { ErrorInterceptor } from './helpers/error.interceptor';
 
 import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './login/register.component';
+
+
+import { AuthenticationService } from './services/authentication.service';
+import { AccountService } from './services/account.service';
+
+import { AlertService } from './services/alert.service';
+import { UserService } from './services/user.service';
 
 @NgModule({
   declarations: [
@@ -38,6 +45,7 @@ import { LoginComponent } from './login/login.component';
     EventComponent,
     CalendarHeaderComponent,
     LoginComponent,
+    RegisterComponent
   ],
   imports: [
     CommonModule, 
@@ -46,7 +54,6 @@ import { LoginComponent } from './login/login.component';
     CalendarModule,
     AppRoutingModule,
     BrowserModule,
-    FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -58,11 +65,17 @@ import { LoginComponent } from './login/login.component';
   ],
   providers: [
     EventService,
-    //{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    //{ provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
 
     // provider used to create fake backend
-    fakeBackendProvider
+    fakeBackendProvider,
+    AuthenticationService,
+    AccountService,
+    AlertService,
+    UserService
+    
+
   ],
   bootstrap: [AppComponent],
   exports: [CalendarHeaderComponent],
