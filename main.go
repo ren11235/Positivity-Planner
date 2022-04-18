@@ -67,12 +67,13 @@ func (a *App) start() {
 	a.r.HandleFunc("/planner", a.addEvent).Methods("POST")
 	a.r.HandleFunc("/planner/{id}", a.updateEvent).Methods("PUT")
 	a.r.HandleFunc("/planner/{id}", a.deleteEvent).Methods("DELETE")
-	a.r.PathPrefix("/").Handler(http.FileServer(http.Dir("./webapp/dist/webapp/")))
+	//a.r.PathPrefix("/").Handler(http.FileServer(http.Dir("./webapp/dist/webapp/")))
 	fmt.Println("test8")
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:4200", "http://localhost:*"},
+		AllowedOrigins:   []string{"http://localhost:4200", "http://localhost:3000", "http://localhost:*", "http://localhost, http://localhost*"},
 		AllowCredentials: true,
-		AllowedMethods:   []string{"GET", "POST", "DELETE", "UPDATE"},
+		AllowedHeaders:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "DELETE", "UPDATE", "OPTIONS"},
 	})
 
 	handler := c.Handler(a.r)

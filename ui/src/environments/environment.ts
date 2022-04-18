@@ -6,6 +6,7 @@ export const environment = {
   production: false,
   gateway: 'http://localhost:3000',
   callback: 'http://localhost:4200/callback',
+  //apiUrl: 'http://localhost:4200'
 };
 /*
  * For easier debugging in development mode, you can import the following file

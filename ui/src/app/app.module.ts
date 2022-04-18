@@ -1,6 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+import { ReactiveFormsModule } from '@angular/forms';
+
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
@@ -21,7 +23,13 @@ import { CommonModule } from '@angular/common';
 
 import { NgbDate, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { fakeBackendProvider } from './helpers/fake-backend';
 
+
+import { JwtInterceptor } from './helpers/jwt.interceptor';
+import { ErrorInterceptor } from './helpers/error.interceptor';
+
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +37,7 @@ import { NgbDate, NgbModule } from '@ng-bootstrap/ng-bootstrap';
     HomeComponent,
     EventComponent,
     CalendarHeaderComponent,
+    LoginComponent,
   ],
   imports: [
     CommonModule, 
@@ -39,6 +48,7 @@ import { NgbDate, NgbModule } from '@ng-bootstrap/ng-bootstrap';
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
@@ -46,7 +56,14 @@ import { NgbDate, NgbModule } from '@ng-bootstrap/ng-bootstrap';
     }),
   
   ],
-  providers: [EventService],
+  providers: [
+    EventService,
+    //{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    //{ provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+
+    // provider used to create fake backend
+    fakeBackendProvider
+  ],
   bootstrap: [AppComponent],
   exports: [CalendarHeaderComponent],
 })
