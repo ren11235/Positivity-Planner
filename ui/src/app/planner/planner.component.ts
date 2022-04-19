@@ -286,13 +286,12 @@ export class EventComponent{
     this.cdr.detectChanges();
   }
 
-
   ngOnInit() {
     this.getAll();
   }
 
   getAll() {
-   
+    console.log("Getting all events");
     this.eventService.getEventList().subscribe((data: any) => {
       let tempEvents: CalendarEvent[] = [];
       for (let i = 0; i < data.length; i++){
@@ -316,32 +315,25 @@ export class EventComponent{
             {
               label: '<i class="fas fa-fw fa-pencil-alt"></i>',
               onClick: ({ event }: { event: CalendarEvent }): void => {
-                console.log('Edit event', event);
+                console.log('Edit event');
                 this.open(this.templateRef);
-                //this.modalRef = this.modalService.show(this.templateRef);
-                
               },
             },
             {
               label: '<i class="fa fa-trash"></i>',
               onClick: ({ event }: { event: CalendarEvent }): void => {
-                console.log('Delete Event', event);
+                console.log('Delete event');
                 this.deleteEvent(newEvent);
-                console.log("test6");
-                //this.modalRef = this.modalService.show(this.templateRef);
               }
             },
           ],
         };
-        //console.log(data[i]);
         newEvent.id = data[i].id;
         newEvent.title = data[i].title;
         newEvent.start = new Date(data[i].start);
         newEvent.end = new Date(data[i].end); 
         newEvent.primary = data[i].primary;
-        //console.log("PRIMARY COLOR: " + data[i].primary);
         newEvent.secondary = data[i].secondary;
-        //console.log("SECONDARY COLOR: " + data[i].secondary);
         newEvent.color.primary = data[i].primary;
         newEvent.color.secondary = data[i].secondary; 
         
@@ -360,47 +352,26 @@ export class EventComponent{
   }
 
   addNewEvent(newCalendarEvent: CalendarEvent) {
-    console.log("Current Primary: " + newCalendarEvent.primary);
-    console.log("Current Secondary: " + newCalendarEvent.secondary);
     
-    //var newCalendarEvent: CalendarEvent =
-      //{
-        //title: 'Has custom class',
-        //color: {
-          //primary: '#ad2121',
-          //secondary: '#FAE3E3',
-       //},
-        //start: new Date(),
-        //cssClass: 'my-custom-class',
-      //};
     console.log("We are adding an event");
     
-
     this.eventService.addEvent(newCalendarEvent).subscribe(() => {
-      this.getAll();
-      //this.eventMessage = '';
+      this.events = [...this.events, newCalendarEvent];
+      this.refresh();
+      //this.getAll();
     });
-    this.refresh();
+    
   }
 
-  //completeEvent(event: Event) {
-    //this.eventService.completeEvent(event).subscribe(() => {
-      //this.getAll();
-    //});
-  //}
-
   deleteEvent(event: CalendarEvent) {
-    console.log("test1");
     this.eventService.deleteEvent(event).subscribe(() => {
-      console.log("test2");
-      this.refresh();
-      console.log("test3");
-      this.getAll();
-      this.refresh();
-      console.log("test4");
+      const index = this.events.indexOf(event);
+      if (index > -1) {
+        this.events.splice(index, 1); // 2nd parameter means remove one item only
+      }
+      this.refresh(); 
+      //this.getAll(); 
     })
-    console.log("test5");
-    this.refresh();
-    
+     
   }
 }
