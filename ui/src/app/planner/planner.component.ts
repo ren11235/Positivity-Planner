@@ -7,6 +7,8 @@ import { fromEvent } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { AuthenticationService } from '../services/authentication.service';
+import { User } from '../models/user';
   
 import {NgbModal, NgbModalOptions, NgbDatepicker, NgbModalRef, NgbDate, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 function floorToNearest(amount: number, precision: number) {
@@ -71,7 +73,7 @@ export class EventComponent{
 
   weekStartsOn: 0 = 0;
 
-  constructor(private cdr: ChangeDetectorRef, private modalService: NgbModal, private eventService: EventService) {}
+  constructor(private cdr: ChangeDetectorRef, private modalService: NgbModal, private eventService: EventService, private authService: AuthenticationService) {}
 
   events: CalendarEvent[] = [];
 
@@ -247,11 +249,11 @@ export class EventComponent{
   }
 
   getAll() {
-    console.log("GETTING ALL");
+   
     this.eventService.getEventList().subscribe((data: any) => {
       let tempEvents: CalendarEvent[] = [];
       for (let i = 0; i < data.length; i++){
-        console.log("TESTSTETSETSETSETESTEST");
+        
         let newEvent: CalendarEvent = {
           id: this.events.length.toString(),
           title: 'New event',
@@ -312,11 +314,7 @@ export class EventComponent{
         //cssClass: 'my-custom-class',
       //};
     console.log("We are adding an event");
-    //var newEvent : Event = {
-      //name: this.eventMessage,
-      //id: '',
-      //time: this.eventTime,
-    //};
+    
 
     this.eventService.addEvent(newCalendarEvent).subscribe(() => {
       this.getAll();
@@ -325,11 +323,11 @@ export class EventComponent{
     this.refresh();
   }
 
-  completeEvent(event: Event) {
-    this.eventService.completeEvent(event).subscribe(() => {
-      this.getAll();
-    });
-  }
+  //completeEvent(event: Event) {
+    //this.eventService.completeEvent(event).subscribe(() => {
+      //this.getAll();
+    //});
+  //}
 
   deleteEvent(event: CalendarEvent) {
     console.log("test1");

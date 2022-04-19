@@ -2,27 +2,40 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { CalendarEvent, CalendarView } from 'angular-calendar';
+import { Observable } from 'rxjs';
+import { User } from './models/user';
 
 @Injectable()
 export class EventService {
   constructor(private httpClient: HttpClient) {}
-
+  public user: User;
   getEventList() {
     console.log("Getting");
-    return this.httpClient.get(environment.gateway + '/planner');
+    let userStr: string = localStorage.getItem('currentUser');
+
+    if (userStr) {
+        this.user = JSON.parse(userStr) as User;
+    }
+    else{
+      console.log("No string available");
+      return;
+    }
+    //let user = JSON.parse(localStorage.getItem('user')) as User;
+    if(this.user == null){
+      console.log("No User Found");
+      return;
+    }
+    return this.httpClient.get(environment.gateway + '/planner/' + this.user.id);
   }
 
   addEvent(event: CalendarEvent) {
     console.log("Add");
-    return this.httpClient.post(environment.gateway + '/planner', event);
+    return this.httpClient.post(environment.gateway + '/planner' + this.user.id, event);
   }
 
-  completeEvent(event: Event) {
-    return this.httpClient.put(environment.gateway + '/planner', event);
-  }
 
   deleteEvent(event: CalendarEvent) {
-    return this.httpClient.delete(environment.gateway + '/planner/' + event.id);
+    return this.httpClient.delete(environment.gateway + '/planner/' + this.user.id + event.id);
   }
 }
 

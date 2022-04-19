@@ -48,10 +48,11 @@ func main() {
 //}
 
 type event struct {
-	ID    string `gorm:"primary_key" json:"id"`
-	Title string `json:"title"`
-	Start string `json:"start"`
-	End   string `json:"end"`
+	ID     string `gorm:"primary_key" json:"id"`
+	UserID string `json:"userID"`
+	Title  string `json:"title"`
+	Start  string `json:"start"`
+	End    string `json:"end"`
 }
 
 type user struct {
@@ -74,10 +75,11 @@ func (a *App) start() {
 	a.db.AutoMigrate(&event{})
 	a.db.AutoMigrate(&user{})
 	fmt.Println("test7")
-	a.r.HandleFunc("/planner", a.getAllEvents).Methods("GET")
-	a.r.HandleFunc("/planner", a.addEvent).Methods("POST")
-	a.r.HandleFunc("/planner/{id}", a.updateEvent).Methods("PUT")
-	a.r.HandleFunc("/planner/{id}", a.deleteEvent).Methods("DELETE")
+	//a.r.HandleFunc("/planner", a.getAllEvents).Methods("GET")
+	a.r.HandleFunc("/planner/{id}", a.getUserEvents).Methods("GET")
+	a.r.HandleFunc("/planner{id}", a.addEvent).Methods("POST")
+	//a.r.HandleFunc("/planner/{id}", a.updateEvent).Methods("PUT")
+	a.r.HandleFunc("/planner/{id1}/{id2}", a.deleteEvent).Methods("DELETE")
 	a.r.HandleFunc("/users/register", a.registerUser).Methods("POST")
 	a.r.HandleFunc("/users/auth", a.authenticateUser).Methods("POST")
 
@@ -95,11 +97,19 @@ func (a *App) start() {
 	fmt.Println("test9")
 }
 
-func (a *App) getAllEvents(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Getting All Events")
+func (a *App) getUserEvents(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("Getting User Events")
+	//var s user
+	//err := json.NewDecoder(r.Body).Decode(&s)
+	//fmt.Println(s)
+	//if err != nil {
+	//sendErr(w, http.StatusBadRequest, err.Error())
+	//return
+	//}
 	w.Header().Set("Content-Type", "application/json")
 	var all []event
-	err := a.db.Find(&all).Error
+	err := a.db.Where(" user_id = ?", mux.Vars(r)["id"]).Find(&all).Error
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError, err.Error())
 		return
@@ -120,16 +130,20 @@ func (a *App) addEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.ID = uuid.New().String()
+	s.UserID = mux.Vars(r)["id"]
+	fmt.Println(s.ID)
+	fmt.Println(s.UserID)
 	err = a.db.Save(&s).Error
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError, err.Error())
 	} else {
+		fmt.Println("SUCCESSFULLY ADDED")
 		w.WriteHeader(http.StatusCreated)
 	}
 }
 
 func (a *App) registerUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("REGISTERING USER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
 	w.Header().Set("Content-Type", "application/json")
 
 	var s user
@@ -149,7 +163,6 @@ func (a *App) registerUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) testAuthenticateUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("HELP ME I DONT KNOW WHAT TO DO!!!!!!")
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -187,11 +200,11 @@ func (a *App) authenticateUser(w http.ResponseWriter, r *http.Request) {
 	if err == nil && n.Password == s.Password {
 		err = json.NewEncoder(w).Encode(n)
 		if err != nil {
-			fmt.Println("We are here!!!")
+
 			sendErr(w, http.StatusInternalServerError, err.Error())
 		}
 	} else {
-		fmt.Println("We are here 222222222222222222 !!!")
+
 		sendErr(w, http.StatusBadRequest, "Incorrect Username or Password")
 	}
 
@@ -217,8 +230,11 @@ func (a *App) updateEvent(w http.ResponseWriter, r *http.Request) {
 func (a *App) deleteEvent(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Deleting Event")
 	w.Header().Set("Content-Type", "application/json")
-	err := a.db.Unscoped().Delete(event{ID: mux.Vars(r)["id"]}).Error
+	var all []event
+	err := a.db.Where(map[string]interface{}{"id": mux.Vars(r)["id2"], "userID": mux.Vars(r)["id1"]}).Delete(&all).Error
+	//err := a.db.Unscoped().Delete(event{ID: mux.Vars(r)["id2"], userID: mux.Vars(r)["id1"]}).Error
 	if err != nil {
+		fmt.Println("Error deleting event")
 		sendErr(w, http.StatusInternalServerError, err.Error())
 	}
 }
