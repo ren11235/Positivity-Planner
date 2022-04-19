@@ -38,6 +38,8 @@ import { AccountService } from './services/account.service';
 import { AlertService } from './services/alert.service';
 import { UserService } from './services/user.service';
 
+import { ColorPickerModule } from 'ngx-color-picker';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -57,6 +59,7 @@ import { UserService } from './services/user.service';
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
+    ColorPickerModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,

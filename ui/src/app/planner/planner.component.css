@@ -12,3 +12,49 @@ button {
   .modal{
     z-index: 2000;
   }
+
+  .smallBox{
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-right: 5px;
+  }
+
+  #Blue {
+    background-color: #c1daed ;
+    border: 1px solid #0d64a6 ;
+  }
+  #Red {
+    background-color: #f87f7f ;
+    border: 1px solid #ad2121 ;
+  }
+  #Yellow {
+    background-color: #f8f29a;
+    border: 1px solid #ffee0c ;
+  }
+  #Orange {
+    background-color: #ffcb95;
+    border: 1px solid #ff8200 ;
+  }
+  #Green {
+    background-color: #95dc77;
+    border: 1px solid #398c15;
+  }
+
+  #Purple {
+    background-color:#d3c3fc;
+    border: 1px solid #5e34ca;
+  }
+
+  #Grey {
+    background-color:#e4e3e3;
+    border: 1px solid #000000;
+  }
+
+  #Brown{
+    background-color:#dcc2a6;
+    border: 1px solid #6b4d2f;
+  }
+  

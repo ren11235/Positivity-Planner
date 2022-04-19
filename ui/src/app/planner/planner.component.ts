@@ -65,6 +65,45 @@ export class EventComponent{
   eventMessage: string;
   eventTime: string;
 
+  color_themes = {
+    "Red": {
+      primary: '#ad2121',
+      secondary: '#fa9e9e',
+    },
+    "Blue": {
+      primary: '#0d64a6',
+      secondary: '#c1daed',
+    },
+    "Yellow": {
+      primary: '#ffee0c',
+      secondary: '#f8f29a' 
+    },
+    "Orange": {
+      primary: '#ff8200',
+      secondary: '#ffcb95' 
+    },
+    "Green": {
+      primary: '#398c15',
+      secondary: '#95dc77'
+    },
+  
+    "Purple": {
+      primary: '#5e34ca',
+      secondary:'#d3c3fc'
+    },
+  
+    "Grey": {
+      primary: '#000000',
+      secondary: '#e4e3e3'
+    },
+  
+    "Brown":{
+      primary: '#6b4d2f',
+      secondary: '#dcc2a6'
+    },
+
+  }
+
   currEvent: CalendarEvent;
   tempStart: string;
   tempEnd: string;
@@ -92,20 +131,18 @@ export class EventComponent{
   closeResult = '';
 
   
-
-  //constructor(private eventService: EventService) { 
-    //this.activeEvents = [];
-    //this.eventMessage = "";
-    //this.eventTime = "";
-    //console.log("test");
-  //}
-
+  changeColor(color){
+    this.currEvent.primary = this.color_themes[color].primary;
+    this.currEvent.secondary = this.color_themes[color].secondary;
+    this.currEvent.color = this.color_themes[color];
+  }
+  
   showDayView(){
     this.view = CalendarView.Day;
   }
   
   changeDateTime(){
-    console.log(this.tempStart);
+    //console.log(this.tempStart);
     let time_component_start = this.tempStart.split(":");
     let new_hour_start = time_component_start[0];
     let new_minute_start = time_component_start[1];
@@ -130,7 +167,6 @@ export class EventComponent{
 
   open(content) {
     this.modalRef = this.modalService.open(content, this.logoutScreenOptions);
-    
    this.modalRef.result.then((result) => {
     this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
@@ -168,6 +204,13 @@ export class EventComponent{
       meta: {
         tmpEvent: true,
       },
+      color: {
+        primary: '#ad2121',
+          secondary: '#fa9e9e',
+      },
+        primary: '#ad2121',
+        secondary: '#fa9e9e',
+     
       actions: [
         {
           label: '<i class="fas fa-fw fa-pencil-alt"></i>',
@@ -262,7 +305,13 @@ export class EventComponent{
           meta: {
             tmpEvent: true,
           },
-
+          
+            primary: '#ad2121',
+            secondary: '#fa9e9e',
+          color : {
+            primary: '#ad2121',
+            secondary: '#fa9e9e',
+          },
           actions: [
             {
               label: '<i class="fas fa-fw fa-pencil-alt"></i>',
@@ -284,18 +333,26 @@ export class EventComponent{
             },
           ],
         };
-        
+        //console.log(data[i]);
         newEvent.id = data[i].id;
         newEvent.title = data[i].title;
         newEvent.start = new Date(data[i].start);
         newEvent.end = new Date(data[i].end); 
+        newEvent.primary = data[i].primary;
+        //console.log("PRIMARY COLOR: " + data[i].primary);
+        newEvent.secondary = data[i].secondary;
+        //console.log("SECONDARY COLOR: " + data[i].secondary);
+        newEvent.color.primary = data[i].primary;
+        newEvent.color.secondary = data[i].secondary; 
+        
         delete newEvent.meta.tmpEvent;
+        
         tempEvents =  [...tempEvents, newEvent];
       }
 
       this.events = tempEvents;
-      console.log(data);
-      console.log(tempEvents);
+      //console.log(data);
+      //console.log(tempEvents);
       console.log(this.events);
       //this.events = data;
     });
@@ -303,6 +360,9 @@ export class EventComponent{
   }
 
   addNewEvent(newCalendarEvent: CalendarEvent) {
+    console.log("Current Primary: " + newCalendarEvent.primary);
+    console.log("Current Secondary: " + newCalendarEvent.secondary);
+    
     //var newCalendarEvent: CalendarEvent =
       //{
         //title: 'Has custom class',

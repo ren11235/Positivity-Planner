@@ -30,12 +30,14 @@ export class EventService {
 
   addEvent(event: CalendarEvent) {
     console.log("Add");
-    return this.httpClient.post(environment.gateway + '/planner' + this.user.id, event);
+    console.log(event.primary);
+    console.log(event.secondary);
+    return this.httpClient.post(environment.gateway + '/planner/' + this.user.id, event);
   }
 
 
   deleteEvent(event: CalendarEvent) {
-    return this.httpClient.delete(environment.gateway + '/planner/' + this.user.id + event.id);
+    return this.httpClient.delete(environment.gateway + '/planner/' + this.user.id + "/" + event.id);
   }
 }
 

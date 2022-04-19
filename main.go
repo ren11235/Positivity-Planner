@@ -47,12 +47,24 @@ func main() {
 //Time string `json:"time"`
 //}
 
+//type Color struct {
+//Primary   string `json:"primary"`
+//Secondary string `json:"secondary"`
+//}
+
 type event struct {
-	ID     string `gorm:"primary_key" json:"id"`
-	UserID string `json:"userID"`
-	Title  string `json:"title"`
-	Start  string `json:"start"`
-	End    string `json:"end"`
+	ID        string `gorm:"primary_key" json:"id"`
+	UserID    string `json:"userID"`
+	Title     string `json:"title"`
+	Start     string `json:"start"`
+	End       string `json:"end"`
+	Primary   string `json:"primary"`
+	Secondary string `json:"secondary"`
+	//Color struct {
+	//Primary   string `json:"primary"`
+	//Secondary string `json:"secondary"`
+	//} `json:"color"`
+	//Color  Color  `json:"color"`
 }
 
 type user struct {
@@ -74,10 +86,11 @@ func (a *App) start() {
 
 	a.db.AutoMigrate(&event{})
 	a.db.AutoMigrate(&user{})
+	//a.db.AutoMigrate(&Color{})
 	fmt.Println("test7")
 	//a.r.HandleFunc("/planner", a.getAllEvents).Methods("GET")
 	a.r.HandleFunc("/planner/{id}", a.getUserEvents).Methods("GET")
-	a.r.HandleFunc("/planner{id}", a.addEvent).Methods("POST")
+	a.r.HandleFunc("/planner/{id}", a.addEvent).Methods("POST")
 	//a.r.HandleFunc("/planner/{id}", a.updateEvent).Methods("PUT")
 	a.r.HandleFunc("/planner/{id1}/{id2}", a.deleteEvent).Methods("DELETE")
 	a.r.HandleFunc("/users/register", a.registerUser).Methods("POST")
@@ -123,14 +136,21 @@ func (a *App) getUserEvents(w http.ResponseWriter, r *http.Request) {
 func (a *App) addEvent(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Adding Event")
 	w.Header().Set("Content-Type", "application/json")
+	fmt.Println(r.Body)
+
+	//s := &event{}
 	var s event
+	//err := json.Unmarshal([]byte(r.Body), s)
+
 	err := json.NewDecoder(r.Body).Decode(&s)
 	if err != nil {
 		sendErr(w, http.StatusBadRequest, err.Error())
 		return
 	}
+
 	s.ID = uuid.New().String()
 	s.UserID = mux.Vars(r)["id"]
+
 	fmt.Println(s.ID)
 	fmt.Println(s.UserID)
 	err = a.db.Save(&s).Error
@@ -168,6 +188,7 @@ func (a *App) testAuthenticateUser(w http.ResponseWriter, r *http.Request) {
 
 	var s user
 	err := json.NewDecoder(r.Body).Decode(&s)
+
 	fmt.Println(s)
 	if err != nil {
 		sendErr(w, http.StatusBadRequest, err.Error())
@@ -231,7 +252,12 @@ func (a *App) deleteEvent(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Deleting Event")
 	w.Header().Set("Content-Type", "application/json")
 	var all []event
-	err := a.db.Where(map[string]interface{}{"id": mux.Vars(r)["id2"], "userID": mux.Vars(r)["id1"]}).Delete(&all).Error
+
+	//fmt.Println("Event ID: " + mux.Vars(r)["id2"])
+	//fmt.Println("User ID: " + mux.Vars(r)["id1"])
+
+	err := a.db.Where("id = ?", mux.Vars(r)["id2"], "userID = ?", mux.Vars(r)["id1"]).Delete(&all).Error
+	//err := a.db.Where(map[string]interface{}{"id": mux.Vars(r)["id2"], "userID": mux.Vars(r)["id1"]}).Delete(&all).Error
 	//err := a.db.Unscoped().Delete(event{ID: mux.Vars(r)["id2"], userID: mux.Vars(r)["id1"]}).Error
 	if err != nil {
 		fmt.Println("Error deleting event")
