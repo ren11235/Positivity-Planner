@@ -187,7 +187,7 @@
 <body>
 <ng-template #content let-modal  class = "modal">
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+    <h4 class="modal-title" id="modal-basic-title">Create New Event</h4>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -237,9 +237,68 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)=" addNewEvent(currEvent); modal.dismiss('Add click') ">Add New Event</button>
+    <button type="button" class="btn btn-outline-dark" (click)="changeDateTime(); addNewEvent(currEvent); modal.dismiss('Add click') ">Add New Event</button>
   </div>
 </ng-template>
+
+
+<ng-template #edit let-modal  class = "modal">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Edit Event 123123412421515125125</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="Title">Title</label>
+        <div class="input-group">
+          <input id="Title" class="form-control" name="title"  placeholder={{currEvent.title}} [(ngModel)]="currEvent.title">
+        </div>
+        <label for="Start Time">Start Time</label>
+        <div class="input-group">
+          <input type="time" id="Start" class="form-control" name = "start" placeholder={{currEvent.start}} [(ngModel)]="tempStart">
+        </div>
+        <label for="End Time">End Time</label>
+        <div class="input-group">
+          <input type="time" id="End" class="form-control" name = "end" placeholder={{currEvent.end}} [(ngModel)]="tempEnd">
+        </div>
+        <label for="Color">Choose a Color for Event</label><br>
+        
+        <input type="radio" name = "Colors" value="Red" (click) = "changeColor('Red')">
+        <div class = "smallBox" id="Red"></div>
+       
+        <input type="radio" name = "Colors" value="Orange" (click) = "changeColor('Orange')">
+        <div class = "smallBox" id="Orange"></div>
+
+        <input type="radio" name = "Colors" value="Yellow" (click) = "changeColor('Yellow')">
+        <div class = "smallBox" id="Yellow"></div>
+
+        <input type="radio" name = "Colors" value="Green" (click) = "changeColor('Green')">
+        <div class = "smallBox" id="Green"></div>
+        
+        <input type="radio" name = "Colors" value="Blue" (click) = "changeColor('Blue')">
+        <div class = "smallBox" id="Blue"></div>
+        
+        <input type="radio" name = "Colors" value="Purple" (click) = "changeColor('Purple')">
+        <div class = "smallBox" id="Purple"></div>
+
+        <input type="radio" name = "Colors" value="Grey" (click) = "changeColor('Grey')">
+        <div class = "smallBox" id="Grey"></div>
+
+        <input type="radio" name = "Colors" value="Brown" (click) = "changeColor('Brown')">
+        <div class = "smallBox" id="Brown"></div>
+
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="changeDateTime(); updateEvent(currEvent); modal.dismiss('Add click') ">Add New Event</button>
+  </div>
+</ng-template>
+
+
 </body>
 
 

@@ -59,7 +59,7 @@ export class CustomEventTitleFormatter extends CalendarEventTitleFormatter {
 
 export class EventComponent{
   @ViewChild('content') templateRef: TemplateRef<any>;
-
+  @ViewChild('edit') templateRefEdit: TemplateRef<any>;
   view: CalendarView = CalendarView.Month;
   activeEvents: Event[];
   eventMessage: string;
@@ -167,7 +167,7 @@ export class EventComponent{
 
   open(content) {
     this.modalRef = this.modalService.open(content, this.logoutScreenOptions);
-   this.modalRef.result.then((result) => {
+    this.modalRef.result.then((result) => {
     this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
     this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
@@ -197,7 +197,7 @@ export class EventComponent{
     mouseDownEvent: MouseEvent,
     segmentElement: HTMLElement
   ) {
-    const dragToSelectEvent: CalendarEvent = {
+    var dragToSelectEvent: CalendarEvent = {
       id: this.events.length.toString(),
       title: 'New event',
       start: segment.date,
@@ -215,8 +215,10 @@ export class EventComponent{
         {
           label: '<i class="fas fa-fw fa-pencil-alt"></i>',
           onClick: ({ event }: { event: CalendarEvent }): void => {
+            this.currEvent = dragToSelectEvent;
             console.log('Edit event', event);
-            this.open(this.templateRef);
+
+            this.open(this.templateRefEdit);
             //this.modalRef = this.modalService.show(this.templateRef);
             
           },
@@ -315,8 +317,9 @@ export class EventComponent{
             {
               label: '<i class="fas fa-fw fa-pencil-alt"></i>',
               onClick: ({ event }: { event: CalendarEvent }): void => {
+                this.currEvent = newEvent;
                 console.log('Edit event');
-                this.open(this.templateRef);
+                this.open(this.templateRefEdit);
               },
             },
             {
@@ -360,6 +363,15 @@ export class EventComponent{
       this.refresh();
       //this.getAll();
     });
+    
+  }
+
+  updateEvent(event: CalendarEvent) {
+    this.eventService.updateEvent(event).subscribe(() => {
+      //const index = this.events.indexOf(event);
+      //this.events[index] = event;
+      //this.refresh();
+    })
     
   }
 

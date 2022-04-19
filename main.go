@@ -91,7 +91,7 @@ func (a *App) start() {
 	//a.r.HandleFunc("/planner", a.getAllEvents).Methods("GET")
 	a.r.HandleFunc("/planner/{id}", a.getUserEvents).Methods("GET")
 	a.r.HandleFunc("/planner/{id}", a.addEvent).Methods("POST")
-	//a.r.HandleFunc("/planner/{id}", a.updateEvent).Methods("PUT")
+	a.r.HandleFunc("/planner/{id1}/{id2}", a.updateEvent).Methods("PUT")
 	a.r.HandleFunc("/planner/{id1}/{id2}", a.deleteEvent).Methods("DELETE")
 	a.r.HandleFunc("/users/register", a.registerUser).Methods("POST")
 	a.r.HandleFunc("/users/auth", a.authenticateUser).Methods("POST")
@@ -101,7 +101,7 @@ func (a *App) start() {
 		AllowedOrigins:   []string{"http://localhost:4200", "http://localhost:3000", "http://localhost:*", "http://localhost, http://localhost*"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "DELETE", "UPDATE", "OPTIONS"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "UPDATE", "OPTIONS"},
 	})
 
 	handler := c.Handler(a.r)
@@ -241,7 +241,8 @@ func (a *App) updateEvent(w http.ResponseWriter, r *http.Request) {
 		sendErr(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	s.ID = mux.Vars(r)["id"]
+	s.UserID = mux.Vars(r)["id1"]
+	s.ID = mux.Vars(r)["id2"]
 	err = a.db.Save(&s).Error
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError, err.Error())
