@@ -24,33 +24,21 @@ import (
 func main() {
 	//pass := os.Getenv("DB_PASS")
 
-	fmt.Println("test1")
 	db, err := gorm.Open("sqlite3", "./planner.db")
-	fmt.Println("test2")
+
 	//db, err := gorm.Open(sqlite.Open("planner.db"), &gorm.Config{})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Println("test3")
+
 	app := App{
 		db: db,
 		r:  mux.NewRouter(),
 	}
-	fmt.Println("test4")
+
 	app.start()
-	fmt.Println("test5")
+
 }
-
-//type event struct {
-//ID   string `gorm:"primary_key" json:"id"`
-//Name string `json:"name"`
-//Time string `json:"time"`
-//}
-
-//type Color struct {
-//Primary   string `json:"primary"`
-//Secondary string `json:"secondary"`
-//}
 
 type event struct {
 	ID        string `gorm:"primary_key" json:"id"`
@@ -60,11 +48,6 @@ type event struct {
 	End       string `json:"end"`
 	Primary   string `json:"primary"`
 	Secondary string `json:"secondary"`
-	//Color struct {
-	//Primary   string `json:"primary"`
-	//Secondary string `json:"secondary"`
-	//} `json:"color"`
-	//Color  Color  `json:"color"`
 }
 
 type user struct {
@@ -82,13 +65,10 @@ type App struct {
 }
 
 func (a *App) start() {
-	fmt.Println("test6")
 
 	a.db.AutoMigrate(&event{})
 	a.db.AutoMigrate(&user{})
-	//a.db.AutoMigrate(&Color{})
-	fmt.Println("test7")
-	//a.r.HandleFunc("/planner", a.getAllEvents).Methods("GET")
+
 	a.r.HandleFunc("/planner/{id}", a.getUserEvents).Methods("GET")
 	a.r.HandleFunc("/planner/{id}", a.addEvent).Methods("POST")
 	a.r.HandleFunc("/planner/{id1}/{id2}", a.updateEvent).Methods("PUT")
@@ -96,7 +76,6 @@ func (a *App) start() {
 	a.r.HandleFunc("/users/register", a.registerUser).Methods("POST")
 	a.r.HandleFunc("/users/auth", a.authenticateUser).Methods("POST")
 
-	fmt.Println("test8")
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:4200", "http://localhost:3000", "http://localhost:*", "http://localhost, http://localhost*"},
 		AllowCredentials: true,
@@ -106,43 +85,36 @@ func (a *App) start() {
 
 	handler := c.Handler(a.r)
 	log.Fatal(http.ListenAndServe(":3000", handler))
-	//log.Fatal(http.ListenAndServe(":3000", a.r))
+
 	fmt.Println("test9")
 }
 
 func (a *App) getUserEvents(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("Getting User Events")
-	//var s user
-	//err := json.NewDecoder(r.Body).Decode(&s)
-	//fmt.Println(s)
-	//if err != nil {
-	//sendErr(w, http.StatusBadRequest, err.Error())
-	//return
-	//}
 	w.Header().Set("Content-Type", "application/json")
 	var all []event
+
 	err := a.db.Where(" user_id = ?", mux.Vars(r)["id"]).Find(&all).Error
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	err = json.NewEncoder(w).Encode(all)
+
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError, err.Error())
 	}
 }
 
 func (a *App) addEvent(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Adding Event")
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Println(r.Body)
 
-	//s := &event{}
+	w.Header().Set("Content-Type", "application/json")
+
 	var s event
-	//err := json.Unmarshal([]byte(r.Body), s)
 
 	err := json.NewDecoder(r.Body).Decode(&s)
+
 	if err != nil {
 		sendErr(w, http.StatusBadRequest, err.Error())
 		return
@@ -151,13 +123,15 @@ func (a *App) addEvent(w http.ResponseWriter, r *http.Request) {
 	s.ID = uuid.New().String()
 	s.UserID = mux.Vars(r)["id"]
 
-	fmt.Println(s.ID)
-	fmt.Println(s.UserID)
+	if s.UserID == "" || s.Primary == "" || s.Secondary == "" || s.Title == "" || s.Start == "" || s.End == "" {
+		sendErr(w, http.StatusInternalServerError, "One or more necessary fields are empty")
+		return
+	}
+
 	err = a.db.Save(&s).Error
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError, err.Error())
 	} else {
-		fmt.Println("SUCCESSFULLY ADDED")
 		w.WriteHeader(http.StatusCreated)
 	}
 }

@@ -4,11 +4,11 @@ import { CalendarView } from 'angular-calendar';
 @Component({
   selector: 'mwl-demo-utils-calendar-header',
   template: `
-    <div class="row text-center">
+    <div class="row padded-row text-center">
       <div class="col-md-4">
         <div class="btn-group">
           <div
-            class="btn btn-primary"
+            class="btn btn-better"
             mwlCalendarPreviousView
             [view]="view"
             [(viewDate)]="viewDate"
@@ -17,7 +17,7 @@ import { CalendarView } from 'angular-calendar';
             Previous
           </div>
           <div
-            class="btn btn-outline-secondary"
+            class="btn btn-better"
             mwlCalendarToday
             [(viewDate)]="viewDate"
             (viewDateChange)="viewDateChange.next(viewDate)"
@@ -25,7 +25,7 @@ import { CalendarView } from 'angular-calendar';
             Today
           </div>
           <div
-            class="btn btn-primary"
+            class="btn btn-better"
             mwlCalendarNextView
             [view]="view"
             [(viewDate)]="viewDate"
@@ -41,21 +41,21 @@ import { CalendarView } from 'angular-calendar';
       <div class="col-md-4">
         <div class="btn-group">
           <div
-            class="btn btn-primary"
+            class="btn btn-better"
             (click)="viewChange.emit(CalendarView.Month)"
             [class.active]="view === CalendarView.Month"
           >
             Month
           </div>
           <div
-            class="btn btn-primary"
+            class="btn btn-better"
             (click)="viewChange.emit(CalendarView.Week)"
             [class.active]="view === CalendarView.Week"
           >
             Week
           </div>
           <div
-            class="btn btn-primary"
+            class="btn btn-better"
             (click)="viewChange.emit(CalendarView.Day)"
             [class.active]="view === CalendarView.Day"
           >

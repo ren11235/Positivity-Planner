@@ -6,7 +6,7 @@ import { User } from '../models/user';
 import { AuthenticationService } from '../services/authentication.service';
 import { UserService } from '../services/user.service';
 
-@Component({ templateUrl: 'home.component.html', styleUrls: ['./home.component.css']})
+@Component({ templateUrl: 'home.component.html', styleUrls: ['../app.component.css']})
 export class HomeComponent {
     loading = false;
     users: User[];

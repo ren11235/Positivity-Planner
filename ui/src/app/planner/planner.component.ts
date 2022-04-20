@@ -38,7 +38,7 @@ export class CustomEventTitleFormatter extends CalendarEventTitleFormatter {
   
   selector: 'app-event',
   templateUrl: './planner.component.html',
-  styleUrls: ['./planner.component.css'],
+  styleUrls: ['./planner.component.css', '../app.component.css'],
   //changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -210,7 +210,7 @@ export class EventComponent{
       },
         primary: '#ad2121',
         secondary: '#fa9e9e',
-     
+      cssClass: "customClass",
       actions: [
         {
           label: '<i class="fas fa-fw fa-pencil-alt"></i>',
@@ -313,6 +313,7 @@ export class EventComponent{
             primary: '#ad2121',
             secondary: '#fa9e9e',
           },
+          cssClass: "customClass",
           actions: [
             {
               label: '<i class="fas fa-fw fa-pencil-alt"></i>',
