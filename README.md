@@ -18,6 +18,7 @@ https://user-images.githubusercontent.com/32146517/164338001-caea2d90-d8ef-437f-
 # 3. Cypress test video 
 # 4. Backend unit test video
 # 5. Link to API Documentation
+
 # 6. Link to Project board
 
 There was only one person working on this project so I did not make a project board. 
@@ -30,12 +31,4 @@ All of the deliverables are in this GitHub repository.
 
 Miranda Overstreet -- I was the only member working on developing this project. This is because I came into this class late (mid March). 
 
-A planner web-application that has a focus on mindfulness, positivity, and making plans with friends.
 
-The plan for this web-application is to create a Google Calendar like web-application with added functionality.
-
-Developers:
-
-Front-End: Miranda Overstreet
-
-Back-End: Miranda Overstreet
