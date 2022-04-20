@@ -11,6 +11,10 @@
 
 
 2. Demo video functionality - 3min max
+
+https://user-images.githubusercontent.com/32146517/164338001-caea2d90-d8ef-437f-9336-cab30f6ecbee.mov
+
+
 3. Cypress test video - 90sec max
 4. Backend unit test video - 90sec max
 5. Link to API Documentation
