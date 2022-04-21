@@ -201,6 +201,7 @@ export class EventComponent{
       id: this.events.length.toString(),
       title: 'New event',
       start: segment.date,
+      end: segment.date,
       meta: {
         tmpEvent: true,
       },
@@ -302,6 +303,7 @@ export class EventComponent{
           id: this.events.length.toString(),
           title: 'New event',
           start: new Date(),
+          end: new Date(),
           
           meta: {
             tmpEvent: true,

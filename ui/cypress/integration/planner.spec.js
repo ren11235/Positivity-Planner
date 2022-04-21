@@ -102,7 +102,16 @@ describe('example to-do app', () => {
       // so we must tell it to visit our website with the `cy.visit()` command.
       // Since we want to visit the same URL at the start of all our tests,
       // we include it in our beforeEach function so that it runs before each test
+      
+    })
+
+    it('Can login correctly', () => {
       cy.visit('http://localhost:4200/planner')
+      cy.get('input').filter("[formcontrolname=username]").should('have.attr', 'ng-reflect-name', 'username')
+      cy.get('input').filter("[formcontrolname=username]").type("test")
+      cy.get('input').filter("[formcontrolname=password]").should('have.attr', 'ng-reflect-name', 'password')
+      cy.get('input').filter("[formcontrolname=password]").type("tester")
+      cy.get(".btn").contains('Login').click()
     })
   
     it('Can initialize correctly with month view', () => { 
@@ -127,7 +136,7 @@ describe('example to-do app', () => {
       cy.get('.cal-day-column').should("have.length", "7")
       cy.get('.cal-hour').should("have.length", "192")
     })
-
+    
     it('Can switch correctly to day view', () => {
       // We'll click on the "Day" button in order to
       // display week view
@@ -142,6 +151,7 @@ describe('example to-do app', () => {
 
     it('Can switch to previous month correctly', () => {
      
+      cy.get(".btn").contains('Month').click()
       let weekday = "";
       let month = "";
       let date = "";
@@ -162,7 +172,7 @@ describe('example to-do app', () => {
     
         let data = [];
 
-        for(let i = 0; i < 24; i++){
+        for(let i = 0; i < 12; i++){
           data = find_previous_month_year(previous_month, previous_year);
           previous_month = data[0];
           previous_year = data[1];
@@ -179,7 +189,7 @@ describe('example to-do app', () => {
     })
 
     it('Can switch to next month correctly', () => {
-     
+      cy.get(".btn").contains('Month').click()
       let weekday = "";
       let month = "";
       let date = "";
@@ -200,7 +210,7 @@ describe('example to-do app', () => {
     
         let data = [];
 
-        for(let i = 0; i < 24; i++){
+        for(let i = 0; i < 12; i++){
           data = find_next_month_year(next_month, next_year);
           next_month = data[0];
           next_year = data[1];
@@ -215,49 +225,37 @@ describe('example to-do app', () => {
         }
       })
     })
-
-    it('Can switch to previous week correctly', () => {
-     
-      let weekday = "";
-      let month = "";
-      let date = "";
-      let year = 0;
-
-      let words = []
-
-      cy.get('h3').then(elem => {
-        
-
-      })
-      cy.get('mwl-demo-utils-calendar-header').then(elem => {
-        const date_string = String(elem.attr("ng-reflect-view-date"));
-        console.log(date_string);
-        words = date_string.split(' ')
-        weekday = words[0];
-        month = words[1];
-        date = words[2];
-        year = words[3];
-
-        let next_week_start = 0;
-        let next_year_end = 0;
     
-        let data = [];
-
-        cy.get(".btn").contains('Week').click()
-
-        for(let i = 0; i < 24; i++){
-          data = find_next_month_year(next_month, next_year);
-          next_month = data[0];
-          next_year = data[1];
-          console.log(next_year);
-          cy.get(".btn").contains('Previous');
-          expect(cy.get("mwl-demo-utils-calendar-header").contains(next_month));
-          expect(cy.get("mwl-demo-utils-calendar-header").contains(next_year));
-
-          expect(cy.get("h3").contains(next_month));
-          expect(cy.get("h3").contains(next_year));
-        }
-      })
+    it('Can open event pop-up', () => {
+      cy.get(".btn").contains('Week').click()
+      cy.get('div .cal-hour-odd').first()
+        .trigger('mousedown', { which: 1 })
+        cy.get('div .cal-hour-odd').eq(3)
+        .trigger('mouseup', {force: true})
+      //cy.get('div .cal-hour-odd').first().click()
+      cy.get('.modal-content').should("have.length", "1")
+      expect(cy.get('.modal-content').contains("Create New Event"))
     })
+
+    it('Can create new event with user input', () => {
+      cy.get('input').filter("[ng-reflect-name=start]").type("09:00")
+      cy.get('input').filter("[ng-reflect-name=end]").type("12:00")
+      cy.get('input').filter("[value=Purple]").click()
+      cy.get('.btn').contains("Add New Event").click()
+      
+    })
+
+    it('Can delete event', () => {
+      cy.visit('http://localhost:4200/planner')
+      cy.get('input').filter("[formcontrolname=username]").should('have.attr', 'ng-reflect-name', 'username')
+      cy.get('input').filter("[formcontrolname=username]").type("test")
+      cy.get('input').filter("[formcontrolname=password]").should('have.attr', 'ng-reflect-name', 'password')
+      cy.get('input').filter("[formcontrolname=password]").type("tester")
+      cy.get(".btn").contains('Login').click()
+      cy.wait(500),
+      cy.get(".btn").contains('Week').click()
+      cy.get(".fa-trash").first().click()
+    })
+   
   })
   

@@ -110,6 +110,7 @@ func (a *App) getUserEvents(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) addEvent(w http.ResponseWriter, r *http.Request) {
 
+	//fmt.Println("TESTING")
 	w.Header().Set("Content-Type", "application/json")
 
 	var s event
@@ -117,6 +118,7 @@ func (a *App) addEvent(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&s)
 
 	if err != nil {
+		//fmt.Println("Couldn't decode")
 		sendErr(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -125,12 +127,15 @@ func (a *App) addEvent(w http.ResponseWriter, r *http.Request) {
 	s.UserID = mux.Vars(r)["id"]
 
 	if s.UserID == "" || s.Primary == "" || s.Secondary == "" || s.Title == "" || s.Start == "" || s.End == "" {
+		//fmt.Println("Couldn't find something")
+		//fmt.Println(s)
 		sendErr(w, http.StatusInternalServerError, "One or more necessary fields are empty")
 		return
 	}
 
 	err = a.db.Save(&s).Error
 	if err != nil {
+		//fmt.Println("Couldn't save")
 		sendErr(w, http.StatusInternalServerError, err.Error())
 	} else {
 		w.WriteHeader(http.StatusCreated)
@@ -194,6 +199,7 @@ func (a *App) registerUser(w http.ResponseWriter, r *http.Request) {
 	s.ID = uuid.New().String()
 
 	if s.FirstName == "" || s.LastName == "" || s.Password == "" || s.Username == "" {
+
 		sendErr(w, http.StatusInternalServerError, "One or more necessary fields are empty")
 		return
 	}
@@ -217,12 +223,11 @@ func (a *App) authenticateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var n user
-	err = a.db.First(&n, "username = ?", s.Username).Error // find product with code D42
+	err = a.db.First(&n, "username = ?", s.Username).Error
 
 	if err == nil && n.Password == s.Password {
 		err = json.NewEncoder(w).Encode(n)
 		if err != nil {
-
 			sendErr(w, http.StatusInternalServerError, err.Error())
 		}
 	} else {
