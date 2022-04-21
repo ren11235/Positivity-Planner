@@ -75,6 +75,7 @@ func (a *App) start() {
 	a.r.HandleFunc("/planner/{id1}/{id2}", a.deleteEvent).Methods("DELETE")
 	a.r.HandleFunc("/users/register", a.registerUser).Methods("POST")
 	a.r.HandleFunc("/users/auth", a.authenticateUser).Methods("POST")
+	a.r.HandleFunc("/users/{id}", a.registerUser).Methods("DELETE")
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:4200", "http://localhost:3000", "http://localhost:*", "http://localhost, http://localhost*"},
@@ -136,39 +137,67 @@ func (a *App) addEvent(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (a *App) updateEvent(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	var s event
+	err := json.NewDecoder(r.Body).Decode(&s)
+	if err != nil {
+		sendErr(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	s.UserID = mux.Vars(r)["id1"]
+	s.ID = mux.Vars(r)["id2"]
+
+	if s.ID == "" || s.UserID == "" || s.Title == "" || s.Start == "" || s.End == "" || s.Primary == "" || s.Secondary == "" {
+		sendErr(w, http.StatusBadRequest, "Missing event field")
+		return
+	}
+	err = a.db.Save(&s).Error
+	if err != nil {
+		sendErr(w, http.StatusInternalServerError, err.Error())
+	}
+}
+
+func (a *App) deleteEvent(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+	var all []event
+
+	err := a.db.Where("id = ?", mux.Vars(r)["id2"], "userID = ?", mux.Vars(r)["id1"]).Delete(&all).Error
+
+	if err != nil {
+		sendErr(w, http.StatusInternalServerError, err.Error())
+	}
+}
+
 func (a *App) registerUser(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
 	var s user
 	err := json.NewDecoder(r.Body).Decode(&s)
-	fmt.Println(s)
+	//fmt.Println(s)
 	if err != nil {
 		sendErr(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	s.ID = uuid.New().String()
-	err = a.db.Save(&s).Error
-	if err != nil {
-		sendErr(w, http.StatusInternalServerError, err.Error())
-	} else {
-		w.WriteHeader(http.StatusCreated)
-	}
-}
+	var all []user
 
-func (a *App) testAuthenticateUser(w http.ResponseWriter, r *http.Request) {
+	err = a.db.Where(" username = ?", s.Username).Find(&all).Error
 
-	w.Header().Set("Content-Type", "application/json")
-
-	var s user
-	err := json.NewDecoder(r.Body).Decode(&s)
-
-	fmt.Println(s)
-	if err != nil {
-		sendErr(w, http.StatusBadRequest, err.Error())
+	if len(all) != 0 {
+		sendErr(w, http.StatusInternalServerError, "Username has been used before")
 		return
 	}
 	s.ID = uuid.New().String()
+
+	if s.FirstName == "" || s.LastName == "" || s.Password == "" || s.Username == "" {
+		sendErr(w, http.StatusInternalServerError, "One or more necessary fields are empty")
+		return
+	}
+
 	err = a.db.Save(&s).Error
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError, err.Error())
@@ -178,12 +207,10 @@ func (a *App) testAuthenticateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) authenticateUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("********* Authenticating User ***********")
 	w.Header().Set("Content-Type", "application/json")
 
 	var s user
 	err := json.NewDecoder(r.Body).Decode(&s)
-	fmt.Println(s)
 	if err != nil {
 		sendErr(w, http.StatusBadRequest, err.Error())
 		return
@@ -205,37 +232,22 @@ func (a *App) authenticateUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) updateEvent(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Updating Event")
+func (a *App) deleteUser(w http.ResponseWriter, r *http.Request) {
+
 	w.Header().Set("Content-Type", "application/json")
 
-	var s event
-	err := json.NewDecoder(r.Body).Decode(&s)
-	if err != nil {
-		sendErr(w, http.StatusBadRequest, err.Error())
-		return
-	}
-	s.UserID = mux.Vars(r)["id1"]
-	s.ID = mux.Vars(r)["id2"]
-	err = a.db.Save(&s).Error
+	var users []user
+	var events []event
+
+	err := a.db.Where("id = ?", mux.Vars(r)["id"]).Delete(&users).Error
+
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError, err.Error())
 	}
-}
 
-func (a *App) deleteEvent(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Deleting Event")
-	w.Header().Set("Content-Type", "application/json")
-	var all []event
+	err = a.db.Where("user_id = ?", mux.Vars(r)["id"]).Delete(&events).Error
 
-	//fmt.Println("Event ID: " + mux.Vars(r)["id2"])
-	//fmt.Println("User ID: " + mux.Vars(r)["id1"])
-
-	err := a.db.Where("id = ?", mux.Vars(r)["id2"], "userID = ?", mux.Vars(r)["id1"]).Delete(&all).Error
-	//err := a.db.Where(map[string]interface{}{"id": mux.Vars(r)["id2"], "userID": mux.Vars(r)["id1"]}).Delete(&all).Error
-	//err := a.db.Unscoped().Delete(event{ID: mux.Vars(r)["id2"], userID: mux.Vars(r)["id1"]}).Error
 	if err != nil {
-		fmt.Println("Error deleting event")
 		sendErr(w, http.StatusInternalServerError, err.Error())
 	}
 }

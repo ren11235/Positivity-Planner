@@ -87,11 +87,9 @@ function find_next_month_year(month, year) {
       break;
     case "Dec":
       next_month = "Jan"
-      console.log("LOOK HERE");
-      console.log(next_year);
-      console.log(Number(next_year));
+     
       next_year = Number(next_year) + 1
-      console.log(next_year);
+      
       break;
   }
   console.log(next_month);
