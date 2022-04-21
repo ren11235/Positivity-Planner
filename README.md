@@ -13,11 +13,22 @@ Positivity Planner is a personal planner that has a focus on mindfulness and pos
 
 # 2. Demo video functionality 
 
-https://user-images.githubusercontent.com/32146517/164338001-caea2d90-d8ef-437f-9336-cab30f6ecbee.mov
+https://user-images.githubusercontent.com/32146517/164369147-87e847f8-a622-402b-a142-6a7a3ddcb7f7.mov
 
-# 3. Cypress test video 
+
+# 3. Cypress test video
+
+
+https://user-images.githubusercontent.com/32146517/164367366-b7c7133d-8b4b-4fbe-8066-3dfe7835c62a.mov
+
+
 # 4. Backend unit test video
+
+https://user-images.githubusercontent.com/32146517/164368198-b0024619-83d7-4bf7-90aa-ef80dc1cb99a.mov
+
 # 5. Link to API Documentation
+
+All documentation is within source code.
 
 # 6. Link to Project board
 
