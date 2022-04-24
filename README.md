@@ -28,7 +28,7 @@ https://user-images.githubusercontent.com/32146517/164368198-b0024619-83d7-4bf7-
 
 # 5. Link to API Documentation
 
-API documentation is provided in the file API-Documentation.md in the Positivity Planner directory.
+API documentation is provided in the [API-Documentation.md](https://github.com/ren11235/Positivity-Planner/API-Documentation.md) file. 
 
 # 6. Link to Project board
 
