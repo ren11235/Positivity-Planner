@@ -28,7 +28,7 @@ https://user-images.githubusercontent.com/32146517/164368198-b0024619-83d7-4bf7-
 
 # 5. Link to API Documentation
 
-All documentation is within source code.
+API documentation is provided in the file API-Documentation.md in the Positivity Planner directory.
 
 # 6. Link to Project board
 
