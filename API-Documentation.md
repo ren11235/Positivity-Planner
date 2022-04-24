@@ -66,12 +66,12 @@ Adds an event for a user to database.
 
   **Required:**
   
-  `id=[string] 
-  title: [string]
-  start: [string]
-  end: [string]
-  primary: [string]
-  secondary: [string]`
+  `id=[string]`  <br />
+  `title=[string]` <br />
+  `start=[string]` <br />
+  `end=[string]` <br />
+  `primary=[string]` <br />
+  `secondary=[string]` <br />
 
 * **Success Response:**
 
