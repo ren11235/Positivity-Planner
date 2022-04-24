@@ -279,7 +279,7 @@ Allow a previously registered user to login.
 
   ```javascript
     $.ajax({
-      url: "/users/register",
+      url: "/users/auth",
       data: {username: "USERNAME", password: "PASSWORD"}
       dataType: "json",
       type : "POST",
